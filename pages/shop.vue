@@ -19,7 +19,7 @@
       <!-- Main Content -->
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Left Sidebar - Filters (Desktop Only) -->
-        <div class="hidden lg:block lg:w-80 flex-shrink-0">
+        <div class="hidden lg:block lg:w-80">
           <div
             class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-8"
           >
@@ -94,32 +94,7 @@
               </div>
             </div>
 
-            <!-- Sort Options -->
-            <div class="mb-6">
-              <h3 class="text-sm font-medium text-gray-700 mb-3">
-                {{ $t("shop.filters.sortBy.title") }}
-              </h3>
-              <div class="flex flex-col gap-2">
-                <label
-                  v-for="option in sortOptions"
-                  :key="option.value"
-                  class="px-3 py-2 border rounded-lg cursor-pointer text-sm transition"
-                  :class="
-                    sortBy === option.value
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
-                  "
-                >
-                  <input
-                    type="radio"
-                    v-model="sortBy"
-                    :value="option.value"
-                    class="hidden"
-                  />
-                  {{ option.label }}
-                </label>
-              </div>
-            </div>
+          
 
             <!-- Active Filters Summary -->
             <div v-if="hasActiveFilters" class="pt-4 border-t border-gray-200">
@@ -370,9 +345,9 @@
           </div>
 
           <!-- Products Grid -->
-          <div v-else>
-            <!-- Results Count -->
-            <div class="mb-6">
+          <div v-show="!productsStore.isLoading && !productsStore.hasError">
+            <!-- Results Count and Sort Options -->
+            <div class="mb-6 flex flex-row sm:items-center sm:justify-between gap-4">
               <p class="text-gray-600">
                 {{
                   $t("shop.results.showing", {
@@ -381,6 +356,26 @@
                   })
                 }}
               </p>
+              
+              <!-- Sort Options as Tags -->
+              <div class="  items-center gap-3 hidden md:flex">
+                <span class="text-sm font-medium text-gray-700">{{ $t("shop.filters.sortBy.title") }}:</span>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-for="option in sortOptions"
+                    :key="option.value"
+                    @click="sortBy = option.value"
+                    class="px-3 py-2 text-sm font-medium rounded-lg border transition-all duration-200 cursor-pointer hover:shadow-sm"
+                    :class="
+                      sortBy === option.value
+                        ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                    "
+                  >
+                    {{ option.label }}
+                  </button>
+                </div>
+              </div>
             </div>
 
             <!-- No Results -->
@@ -721,7 +716,7 @@ import Breadcrumb from "~/components/Global/Breadcrumb.vue";
 
 // Set page title
 useHead({
-  title: "Shop - Nariz Dorada",
+  title: "Shop - Tajamo",
 });
 
 const productsStore = useProductsStore();
@@ -751,12 +746,12 @@ const hasActiveFilters = computed(() => {
   );
 });
 const sortOptions = [
-  { value: "name-asc", label: "Name: A to Z" },
-  { value: "name-desc", label: "Name: Z to A" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-  { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
+  { value: "name-asc", label: "A to Z" },
+  { value: "name-desc", label: "Z to A" },
+  { value: "price-asc", label: "Price ↑" },
+  { value: "price-desc", label: "Price ↓" },
+  { value: "newest", label: "Newest" },
+  { value: "oldest", label: "Oldest" },
 ];
 const filteredProducts = computed(() => {
   let products = productsStore.products;

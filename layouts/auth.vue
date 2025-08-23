@@ -3,13 +3,16 @@
     <div class="w-full max-w-md">
       <!-- Logo/Brand -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-heading font-bold text-scimaPrimary">Tajamo</h1>
+        <NuxtLink to="/" class="inline-block hover:opacity-80 transition-opacity">
+          <h1 class="text-3xl font-heading font-bold text-scimaPrimary cursor-pointer">Tajamo</h1>
+        </NuxtLink>
         <p class="text-secondary-600 mt-2">Welcome back</p>
       </div>
       
       <!-- Auth Content -->
       <div class="bg-white rounded-2xl shadow-xl p-8 border border-secondary-100">
         <slot />
+        <NuxtSnackbar />
       </div>
       
       <!-- Footer -->
@@ -23,7 +26,7 @@
 </template>
 
 <script setup>
-// Auth layout logic can be added here
+
 </script>
 
 <style scoped>

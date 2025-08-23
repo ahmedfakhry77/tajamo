@@ -9,6 +9,7 @@
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-4">
         <button
+          @click="goToCollection"
           class="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
         >
           {{ $t("home.hero.exploreCollection") }}
@@ -24,7 +25,11 @@
 </template>
 
 <script setup>
-// Hero component logic
+const router = useRouter();
+
+const goToCollection = () => {
+  router.push("/shop");
+};
 </script>
 
 <style scoped>

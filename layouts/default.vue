@@ -1,13 +1,14 @@
 <template>
   <div class="min-h-screen bg-secondary-50">
     <!-- Header Component -->
-    <ThemeHeader />
+    <ThemeHeader class="sticky top-0 z-50" />
     
     <!-- Main Content -->
     <main >
       <slot />
+      <NuxtSnackbar />
     </main>
-    
+    <Snackbar />
     <!-- Footer Component -->
     <ThemeFooter />
   </div>

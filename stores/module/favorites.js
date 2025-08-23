@@ -24,6 +24,9 @@ export const useFavoritesStore = defineStore('favorites', {
     hasFavorites: (state) => {
       return state.favorites.length > 0
     },
+    getProductImage: (state) => (productId) => {
+      return state.favorites.find(product => product.id === productId)?.gallery[0]
+    },
     getProductName: (state) => (productId) => {
       return state.favorites.find(product => product.id === productId)?.name
     },

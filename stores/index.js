@@ -4,6 +4,8 @@ export { useProductsStore } from './module/products'
 export { useBannersStore } from './module/banners'
 export { useFavoritesStore } from './module/favorites'
 export { useCartStore } from './module/cart'
+export { useAddressesStore } from './module/addresses'
+export { useProfileStore } from './module/profile'
 
 // Initialize all stores
 export const initializeAllStores = async () => {
@@ -14,6 +16,8 @@ export const initializeAllStores = async () => {
     const { useBannersStore } = await import('./module/banners')
     const { useFavoritesStore } = await import('./module/favorites')
     const { useCartStore } = await import('./module/cart')
+    const { useAddressesStore } = await import('./module/addresses')
+    const { useProfileStore } = await import('./module/profile')
 
     // Initialize store instances
     const productsStore = useProductsStore()
@@ -21,6 +25,8 @@ export const initializeAllStores = async () => {
     const bannersStore = useBannersStore()
     const favoritesStore = useFavoritesStore()
     const cartStore = useCartStore()
+    const addressesStore = useAddressesStore()
+    const profileStore = useProfileStore()
 
     // Load data in parallel
     await Promise.all([
@@ -28,7 +34,9 @@ export const initializeAllStores = async () => {
       categoriesStore.loadCategories(),
       bannersStore.loadBanners(),
       favoritesStore.loadUserPreferences(),
-      cartStore.loadUserPreferences()
+      cartStore.loadUserPreferences(),
+      addressesStore.loadAddresses(),
+      profileStore.loadProfile()
     ])
 
     return {
@@ -36,7 +44,9 @@ export const initializeAllStores = async () => {
       categoriesStore,
       bannersStore,
       favoritesStore,
-      cartStore
+      cartStore,
+      addressesStore,
+      profileStore
     }
   } catch (error) {
     console.error('Error initializing stores:', error)

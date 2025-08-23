@@ -94,25 +94,7 @@ const newsletterLoading = ref(false)
 
 const currentYear = computed(() => new Date().getFullYear())
 
-const handleNewsletterSignup = async () => {
-  if (!newsletterEmail.value) return
-  
-  newsletterLoading.value = true
-  try {
-    // Add your newsletter signup logic here
-    console.log('Newsletter signup:', newsletterEmail.value)
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-    
-    // Reset form after successful submission
-    newsletterEmail.value = ''
-    alert($t('footer.newsletter.success'))
-  } catch (error) {
-    console.error('Newsletter signup error:', error)
-    alert($t('footer.newsletter.error'))
-  } finally {
-    newsletterLoading.value = false
-  }
-}
+
 </script>
 
 <style scoped>

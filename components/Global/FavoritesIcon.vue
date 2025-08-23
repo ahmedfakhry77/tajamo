@@ -1,7 +1,8 @@
 <template>
   <div class="relative">
     <button
-      @click="toggleFavorites"
+      @click="showDropdown = !showDropdown"
+
       class="relative p-2 text-gray-600 hover:text-red-500 transition-colors"
       aria-label="Favorites"
     >
@@ -26,6 +27,8 @@
     <!-- Favorites Dropdown -->
     <div
       v-if="showDropdown"
+      @mouseover="showDropdown = true"
+      @mouseleave="showDropdown = false"
       class="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
       @click.stop
     >
@@ -43,9 +46,7 @@
         >
           <!-- Product Image -->
           <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
+            <img :src="getProductImage(productId)" alt="Product Image" class="w-full h-full object-cover rounded-lg">
           </div>
 
           <!-- Product Info -->
@@ -88,6 +89,7 @@
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
           </svg>
         </div>
+        <p class="text-gray-500">No favorites yet</p>
       </div>
 
       <!-- Footer -->
@@ -106,30 +108,52 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useFavoritesStore } from '~/stores/module/favorites'
+import { useProductsStore } from '~/stores/module/products'
 
 const favoritesStore = useFavoritesStore()
+const productsStore = useProductsStore()
 const showDropdown = ref(false)
+const router = useRouter()
 
 // Computed properties
 const favoritesCount = computed(() => favoritesStore.favoritesCount)
 const hasFavorites = computed(() => favoritesStore.hasFavorites)
 const favorites = computed(() => favoritesStore.favorites)
 
+// Helper functions to get product information from products store
+const getProductImage = (productId) => {
+  const product = productsStore.getProductById(productId);
+  return product ? product.gallery[0] || product.thumbnail || "" : "";
+};
+
+const getProductName = (productId) => {
+  const product = productsStore.getProductById(productId);
+  return product
+    ? product.name?.es || product.name?.en || "Product"
+    : "Product";
+};
+
+const getProductCategory = (productId) => {
+  const product = productsStore.getProductById(productId);
+  return product ? product.category?.slug || "Category" : "Category";
+};
+
+const getProductPrice = (productId) => {
+  const product = productsStore.getProductById(productId);
+  return product ? product.price?.after_discount || "0" : "0";
+};
+
+const getProductCurrency = (productId) => {
+  const product = productsStore.getProductById(productId);
+  return product ? product.price?.currency || "" : "";
+};
+
 // Methods
 const toggleFavorites = () => {
   showDropdown.value = !showDropdown.value
 }
-const getProductName = (productId) => {
-  return favoritesStore.getProductName(productId)
-}
-const getProductCategory = (productId) => {
-  return favoritesStore.getProductCategory(productId)
-}
-const getProductPrice = (productId) => {
-  return favoritesStore.getProductPrice(productId)
-}
-const getProductCurrency = (productId) => {
-  return favoritesStore.getProductCurrency(productId)
+const goToFavorites = () => {
+  router.push('/favorites')
 }
 
 const clearAllFavorites = () => {
@@ -146,7 +170,11 @@ const handleClickOutside = (event) => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Load products if not already loaded
+  if (productsStore.products.length === 0) {
+    await productsStore.loadProducts();
+  }
   document.addEventListener('click', handleClickOutside)
 })
 
