@@ -10,27 +10,14 @@
         </p>
       </div>
 
-      <div v-if="productsStore.isLoading" class="text-center py-12">
-        <div
-          class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
-        ></div>
-        <p class="mt-2 text-gray-600">{{ $t("home.featuredProducts.loading") }}</p>
-      </div>
+      
 
-      <div v-else-if="productsStore.hasError" class="text-center py-12">
-        <p class="text-red-600">{{ productsStore.error }}</p>
-        <button
-          @click="productsStore.loadProducts()"
-          class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Retry
-        </button>
-      </div>
+    
 
-      <div v-else>
+      <div >
         <MazCarousel>
           <ProductCard
-            v-for="product in featuredProducts"
+            v-for="product in products"
             :key="product.id"
             :product="product"
           />
@@ -38,14 +25,14 @@
       </div>
 
       <div
-        v-if="featuredProducts.length === 0 && !productsStore.isLoading"
+        v-if="products.length === 0"
         class="text-center py-12"
       >
         <p class="text-gray-600">{{ $t("home.featuredProducts.noProducts") }}</p>
       </div>
 
       <!-- View All Products Button -->
-      <div v-if="featuredProducts.length > 0" class="text-center mt-8">
+      <div v-if="products.length > 0" class="text-center mt-8">
         <NuxtLink
           to="/shop"
           class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
@@ -74,17 +61,13 @@
 import { computed, onMounted } from "vue";
 import { useProductsStore } from "~/stores/module/products";
 
-const productsStore = useProductsStore();
+const props = defineProps({
+  products: {
+    type: Array,
+    required: true,
+  },
+})
 
-const featuredProducts = computed(() => {
-  return productsStore.getFeaturedProducts;
-});
-
-onMounted(async () => {
-  if (productsStore.products.length === 0) {
-    await productsStore.loadProducts();
-  }
-});
 </script>
 
 <style scoped>

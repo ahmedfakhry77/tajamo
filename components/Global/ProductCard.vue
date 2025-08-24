@@ -62,6 +62,7 @@
           <!-- Favorite button -->
           <span
             @click="toggleFavorite"
+            v-if="token"
             class="w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-red-500 hover:bg-red-50 transition-all duration-200 cursor-pointer"
             :class="[
               isFavorite ? 'text-white bg-red-500' : 'text-gray-600 bg-white',
@@ -103,6 +104,7 @@
               @click="decrementQuantity"
               class="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors"
               :disabled="selectedQuantity === 1"
+              aria-label="Decrement quantity"
             >
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
@@ -115,6 +117,7 @@
               @click="incrementQuantity"
               class="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors"
               :disabled="selectedQuantity >= stock"
+              aria-label="Increment quantity"
             >
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -183,7 +186,7 @@
         <div class="flex flex-col">
           <div class="flex items-center gap-2">
             <span class="text-xl font-extrabold leading-tight text-gray-900">
-              {{ price.after_discount }} {{ price.currency }}
+              {{ price.after_discount }} {{ price.currency.es }}
             </span>
             <span v-if="price.has_discount" class="text-sm text-gray-500">
               -
@@ -192,7 +195,7 @@
               v-if="price.has_discount"
               class="text-sm text-gray-500 line-through"
             >
-              {{ price.original }} {{ price.currency }}
+              {{ price.original }} {{ price.currency.es }}
             </span>
           </div>
         </div>
@@ -317,13 +320,13 @@
                 <div class="space-y-4">
                   <div class="flex items-center gap-4">
                     <span class="text-3xl font-bold text-gray-900">
-                      {{ price.after_discount }} {{ price.currency }}
+                      {{ price.after_discount }} {{ price.currency.es }}
                     </span>
                     <span
                       v-if="price.has_discount"
                       class="text-xl text-gray-500 line-through"
                     >
-                      {{ price.original }} {{ price.currency }}
+                      {{ price.original }} {{ price.currency.es }}
                     </span>
                   </div>
 
@@ -430,6 +433,7 @@
 
                   <!-- Favorite Button -->
                   <button
+                    v-if="token"
                     @click="toggleFavorite"
                     class="w-full flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 rounded-lg font-medium transition-colors"
                     :class="
@@ -494,23 +498,13 @@ const props = defineProps({
   product: {
     type: Object,
     required: true,
-    validator: (value) => {
-      return (
-        value &&
-        typeof value.id === "number" &&
-        typeof value.name === "object" &&
-        typeof value.price === "object" &&
-        typeof value.category === "object" &&
-        typeof value.stock === "number"
-      );
-    },
   },
 });
 
 // Stores
 const favoritesStore = useFavoritesStore();
 const cartStore = useCartStore();
-
+const token = useCookie('token')
 // Local state
 const isHovered = ref(false);
 const showProductDialog = ref(false);

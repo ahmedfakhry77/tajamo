@@ -1,21 +1,10 @@
 <template>
   <section class="relative">
-    <div v-if="bannersStore.isLoading" class="text-center py-12">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      <p class="mt-2 text-gray-600">{{ $t("home.banners.loading") }}</p>
-    </div>
+    
 
-    <div v-else-if="bannersStore.hasError" class="text-center py-12">
-      <p class="text-red-600">{{ bannersStore.error }}</p>
-      <button 
-        @click="bannersStore.loadBanners()"
-        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        {{ $t("home.banners.retry") }}
-      </button>
-    </div>
+     
 
-    <div v-else-if="activeBanners.length > 0" class="relative">
+    <div v-if="banners.length > 0" class="relative">
       <swiper
         :slides-per-view="1"
         :effect="'fade'"
@@ -29,24 +18,25 @@
         :modules="[Autoplay, Navigation, Pagination]"
         class="banner-swiper"
       >
-        <swiper-slide v-for="banner in activeBanners" :key="banner.id">
+        <swiper-slide v-for="banner in banners" :key="banner.id">
           <div class="relative">
             <NuxtImg
               :src="banner.image"
-              :alt="getBannerTitle(banner)"
+              :alt="banner.title.es"
               class="w-full h-[500px] object-cover"
             />
             <div class="absolute inset-0 bg-black bg-opacity-40"></div>
             <div class="absolute inset-0 flex items-center justify-center">
               <div class="text-center text-white max-w-4xl mx-auto px-4">
                 <h2 class="text-4xl md:text-6xl font-bold mb-4">
-                  {{ getBannerTitle(banner) }}
+                  {{ banner.title.es }}
                 </h2>
                 <p class="text-xl md:text-2xl mb-8 opacity-90">
-                  {{ getBannerSubtitle(banner) }}
+                  {{ banner.subtitle.es }}
                 </p>
                 <NuxtLink
                   :to="banner.url"
+                  target="_blank"
                   class="inline-block bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors"
                 >
                   {{ $t('home.banners.shopNow') }}
@@ -76,26 +66,14 @@ import 'swiper/css/effect-fade'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
-const bannersStore = useBannersStore()
 
-const activeBanners = computed(() => {
-  return bannersStore.getActiveBanners
-})
 
-// Helper functions
-const getBannerTitle = (banner) => {
-  return banner.name?.en || banner.name?.ar || 'Banner Title'
-}
 
-const getBannerSubtitle = (banner) => {
-  // You can customize this based on banner type or add subtitle field to banner data
-  return 'Discover our exclusive collection'
-}
-
-onMounted(async () => {
-  if (bannersStore.banners.length === 0) {
-    await bannersStore.loadBanners()
-  }
+const props = defineProps({
+  banners: {
+    type: Array,
+    required: true,
+  },
 })
 </script>
 

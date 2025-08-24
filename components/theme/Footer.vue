@@ -6,13 +6,19 @@
         <!-- Company Description -->
         <div class="col-span-1 lg:col-span-2">
           <div class="flex items-center space-x-2 mb-4">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <img 
+              v-if="logo && logo !== '/images/hero.jpg'" 
+              :src="logo" 
+              alt="Logo" 
+              class="w-8 h-8 rounded-lg object-cover"
+            />
+            <div v-else class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-lg">T</span>
             </div>
             <h3 class="text-xl font-bold text-gray-900">{{ $t('common.brand') }}</h3>
           </div>
           <p class="text-gray-600 mb-4 max-w-md">
-            {{ $t('footer.companyDescription') }}
+            {{ description }}
           </p>
         </div>
 
@@ -43,22 +49,7 @@
           </ul>
         </div>
 
-        <!-- Support -->
-        <div class="col-span-1">
-          <h4 class="text-sm font-semibold text-gray-900 mb-4">{{ $t('footer.support') }}</h4>
-          <ul class="space-y-2">
-            <li>
-              <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
-                {{ $t('footer.helpCenter') }}
-              </a>
-            </li>
-            <li>
-              <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
-                {{ $t('footer.documentation') }}
-              </a>
-            </li>
-          </ul>
-        </div>
+        
 
 
        
@@ -70,17 +61,7 @@
           <p class="text-gray-600 text-sm">
             © {{ new Date().getFullYear() }} {{ $t('common.brand') }}. {{ $t('footer.copyright') }}
           </p>
-          <div class="flex items-center space-x-6 mt-4 md:mt-0">
-            <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">
-              {{ $t('footer.privacy') }}
-            </a>
-            <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">
-              {{ $t('footer.terms') }}
-            </a>
-            <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">
-              {{ $t('footer.cookies') }}
-            </a>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -89,6 +70,19 @@
 
 <script setup>
 const { t: $t } = useI18n()
+
+// Props
+const props = defineProps({
+  logo: {
+    type: String,
+    default: null
+  },
+  description: {
+    type: String,
+    default: 'Default company description'
+  }
+})
+
 const newsletterEmail = ref('')
 const newsletterLoading = ref(false)
 

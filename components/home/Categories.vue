@@ -3,79 +3,95 @@
     <div class="container mx-auto px-4">
       <div class="text-center mb-12">
         <h2 class="text-3xl font-bold text-gray-900 mb-4">
-          {{ $t('home.categories.title') }}
+          {{ $t("home.categories.title") }}
         </h2>
         <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          {{ $t('home.categories.subtitle') }}
+          {{ $t("home.categories.subtitle") }}
         </p>
       </div>
 
-      <div v-if="categoriesStore.isLoading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p class="mt-2 text-gray-600">Loading categories...</p>
-      </div>
 
-      <div v-else-if="categoriesStore.hasError" class="text-center py-12">
-        <p class="text-red-600">{{ categoriesStore.error }}</p>
-        <button 
-          @click="categoriesStore.loadCategories()"
-          class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Retry
-        </button>
-      </div>
-
-      <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div  class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Women's Fragrances -->
-        <NuxtLink to="/shop?category=womens" class="block">
-          <div class="text-center group relative overflow-hidden rounded-2xl hover:shadow-xl transition-all duration-300 h-80 cursor-pointer">
+        <NuxtLink :to="`/shop?category=${categories[0].slug}`" class="block">
+          <div
+            class="text-center group relative overflow-hidden rounded-2xl hover:shadow-xl transition-all duration-300 h-80 cursor-pointer"
+          >
             <div class="absolute inset-0">
-              <img 
-                src="/images/women.jpeg" 
-                alt="Women's Fragrances" 
+              <img
+                :src="categories[0].image"
+                alt="Women's Fragrances"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
+              ></div>
             </div>
-            <div class="relative z-10 flex flex-col justify-end h-full p-8 text-white">
-              <h3 class="text-xl font-semibold mb-2 text-center">{{ $t('home.categories.womens.title') }}</h3>
-              <p class="text-gray-200 mb-4 text-center">{{ $t('home.categories.womens.description') }}</p>
+            <div
+              class="relative z-10 flex flex-col justify-end h-full p-8 text-white"
+            >
+              <h3 class="text-xl font-semibold mb-2 text-center">
+                {{ categories[0].name.es }}
+              </h3>
+              <p class="text-gray-200 mb-4 text-center">
+                {{ categories[0].description?.es || '---' }}
+              </p>
             </div>
           </div>
-        </NuxtLink>
+        </NuxtLink> 
 
         <!-- Men's Fragrances -->
-        <NuxtLink to="/shop?category=mens" class="block">
-          <div class="text-center group relative overflow-hidden rounded-2xl hover:shadow-xl transition-all duration-300 h-80 cursor-pointer">
+        <NuxtLink :to="`/shop?category=${categories[1].slug}`" class="block">
+          <div
+            class="text-center group relative overflow-hidden rounded-2xl hover:shadow-xl transition-all duration-300 h-80 cursor-pointer"
+          >
             <div class="absolute inset-0">
-              <img 
-                src="/images/man.jpeg" 
-                alt="Men's Fragrances" 
+              <img
+                :src="categories[1].image"
+                alt="Men's Fragrances"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
+              ></div>
             </div>
-            <div class="relative z-10 flex flex-col justify-end h-full p-8 text-white">
-              <h3 class="text-xl font-semibold mb-2 text-center">{{ $t('home.categories.mens.title') }}</h3>
-              <p class="text-gray-200 mb-4 text-center">{{ $t('home.categories.mens.description') }}</p>
+            <div
+              class="relative z-10 flex flex-col justify-end h-full p-8 text-white"
+            >
+              <h3 class="text-xl font-semibold mb-2 text-center">
+                {{ categories[1].name.es }}
+              </h3>
+              <p class="text-gray-200 mb-4 text-center">
+                {{ categories[1].description?.es || '---' }}
+              </p>
             </div>
           </div>
         </NuxtLink>
 
         <!-- Unisex Fragrances -->
-        <NuxtLink to="/shop?category=unisex" class="block">
-          <div class="text-center group relative overflow-hidden rounded-2xl hover:shadow-xl transition-all duration-300 h-80 cursor-pointer">
+        <NuxtLink :to="`/shop?category=${categories[2].slug}`" class="block">
+          <div
+            class="text-center group relative overflow-hidden rounded-2xl hover:shadow-xl transition-all duration-300 h-80 cursor-pointer"
+          >
             <div class="absolute inset-0">
-              <img 
-                src="/images/uisex.jpeg" 
-                alt="Unisex Fragrances" 
+              <img
+                :src="categories[2].image"
+                alt="Unisex Fragrances"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
+              ></div>
             </div>
-            <div class="relative z-10 flex flex-col justify-end h-full p-8 text-white">
-              <h3 class="text-xl font-semibold mb-2 text-center">{{ $t('home.categories.unisex.title') }}</h3>
-              <p class="text-gray-200 mb-4 text-center">{{ $t('home.categories.unisex.description') }}</p>
+            <div
+              class="relative z-10 flex flex-col justify-end h-full p-8 text-white"
+            >
+              <h3 class="text-xl font-semibold mb-2 text-center">
+                  {{ categories[2].name.es }}
+              </h3>
+              <p class="text-gray-200 mb-4 text-center">
+                {{ categories[2].description?.es || '---' }}
+              </p>
             </div>
           </div>
         </NuxtLink>
@@ -85,16 +101,14 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
-import { useCategoriesStore } from '~/stores/module/categories'
+import { computed, onMounted } from "vue";
 
-const categoriesStore = useCategoriesStore()
-
-onMounted(async () => {
-  if (categoriesStore.categories.length === 0) {
-    await categoriesStore.loadCategories()
-  }
-})
+const props = defineProps({
+  categories: {
+    type: Array,
+    required: true,
+  },
+});
 </script>
 
 <style scoped>

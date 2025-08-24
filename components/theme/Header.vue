@@ -6,7 +6,13 @@
           <!-- Logo -->
           <div class="flex items-center">
             <NuxtLink to="/" class="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-              <div class="w-8 h-8 bg-scimaPrimary rounded-lg flex items-center justify-center">
+              <img 
+                v-if="logo && logo !== '/images/hero.jpg'" 
+                :src="logo" 
+                alt="Logo" 
+                class="w-8 h-8 rounded-lg object-cover"
+              />
+              <div v-else class="w-8 h-8 bg-scimaPrimary rounded-lg flex items-center justify-center">
                 <span class="text-white font-bold text-lg">T</span>
               </div>
               <h1 class="text-2xl font-heading font-bold text-scimaPrimary">
@@ -51,28 +57,50 @@
             </div>
             
             <!-- Favorites Icon -->
-            <FavoritesIcon />
+            <FavoritesIcon v-if="token" />
 
             <!-- User Menu -->
             <div class="relative hidden lg:block user-menu">
-              <div v-if="!token" class="flex items-center space-x-2">
+              <div v-if="token" class="flex items-center space-x-2">
                 <button
                   @click="showUserMenu = !showUserMenu"
                   class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
                 >
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <img 
+                    v-if="user?.picture?.sm" 
+                    :src="user.picture.sm" 
+                    :alt="user.name"
+                    class="w-8 h-8 rounded-full object-cover"
+                  />
+                  <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                   </svg>
-                  <span class="hidden sm:block">Profile</span>
+                  <span class="hidden sm:block">{{ user?.name || 'Profile' }}</span>
                 </button>
                 
                 <!-- User Dropdown -->
                 <div
                   v-if="showUserMenu"
-                  class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                  class="absolute right-0 top-full mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
                   @click.stop
                 >
                   <div class="py-2">
+                    <!-- User Info Header -->
+                    <div v-if="user" class="px-4 py-3 border-b border-gray-100">
+                      <div class="flex items-center space-x-3">
+                        <img 
+                          v-if="user.picture?.sm" 
+                          :src="user.picture.sm" 
+                          :alt="user.name"
+                          class="w-10 h-10 rounded-full object-cover"
+                        />
+                        <div>
+                          <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
+                          <p class="text-xs text-gray-500">{{ user.email }}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
                     <NuxtLink
                       to="/profile"
                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
@@ -150,7 +178,13 @@
     >
       <template #title>
         <div class="flex items-center space-x-2">
-          <div class="w-8 h-8 bg-scimaPrimary rounded-lg flex items-center justify-center">
+          <img 
+            v-if="logo && logo !== '/images/hero.jpg'" 
+            :src="logo" 
+            alt="Logo" 
+            class="w-8 h-8 rounded-lg object-cover"
+          />
+          <div v-else class="w-8 h-8 bg-scimaPrimary rounded-lg flex items-center justify-center">
             <span class="text-white font-bold text-lg">T</span>
           </div>
           <h2 class="text-xl font-heading font-bold text-scimaPrimary">
@@ -218,6 +252,22 @@
             </h3>
             
             <div v-if="token" class="space-y-2">
+              <!-- User Info Header -->
+              <div v-if="user" class="px-3 py-3 border-b border-gray-100">
+                <div class="flex items-center space-x-3">
+                  <img 
+                    v-if="user.picture?.sm" 
+                    :src="user.picture.sm" 
+                    :alt="user.name"
+                    class="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
+                    <p class="text-xs text-gray-500">{{ user.email }}</p>
+                  </div>
+                </div>
+              </div>
+              
               <NuxtLink
                 to="/profile"
                 class="flex items-center space-x-3 text-gray-700 hover:text-blue-600 transition-colors font-medium py-3 px-3 rounded-lg hover:bg-gray-50"
@@ -284,6 +334,18 @@
 import { ref, watch } from 'vue'
 import FavoritesIcon from '~/components/Global/FavoritesIcon.vue'
 import CartIcon from '~/components/Global/CartIcon.vue'
+
+// Props
+const props = defineProps({
+  logo: {
+    type: String,
+    default: null
+  },
+  user: {
+    type: Object,
+    default: null
+  }
+})
 
 const token = useCookie('token')
 const isMobileDrawerOpen = ref(false)
