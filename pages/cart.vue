@@ -256,7 +256,6 @@
 <script setup>
 import { computed, onMounted } from "vue";
 import { useCartStore } from "~/stores/module/cart";
-import { useProductsStore } from "~/stores/module/products";
 import Breadcrumb from "~/components/Global/Breadcrumb.vue";
 const { t } = useI18n();
 // Set page title
@@ -265,7 +264,6 @@ useHead({
 });
 
 const cartStore = useCartStore();
-const productsStore = useProductsStore();
 
 // Computed properties
 const cartItems = computed(() => cartStore.getCartItems);

@@ -56,7 +56,6 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
-import { useBannersStore } from '~/stores/module/banners'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 

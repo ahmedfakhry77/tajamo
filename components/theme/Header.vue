@@ -53,11 +53,11 @@
           <div class="flex items-center space-x-4">
             <!-- Cart Icon -->
             <div class="h-full">
-              <CartIcon class="h-full" />
+              <!-- <CartIcon class="h-full" /> -->
             </div>
             
             <!-- Favorites Icon -->
-            <FavoritesIcon v-if="token" />
+            <!-- <FavoritesIcon v-if="token" /> -->
 
             <!-- User Menu -->
             <div class="relative hidden lg:block user-menu">

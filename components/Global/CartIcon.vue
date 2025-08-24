@@ -145,10 +145,8 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useCartStore } from "~/stores/module/cart";
-import { useProductsStore } from "~/stores/module/products";
 
 const cartStore = useCartStore();
-const productsStore = useProductsStore();
 const showCartDropdown = ref(false);
 
 // Computed properties

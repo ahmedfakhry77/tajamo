@@ -59,7 +59,6 @@
 
 <script setup>
 import { computed, onMounted } from "vue";
-import { useProductsStore } from "~/stores/module/products";
 
 const props = defineProps({
   products: {
