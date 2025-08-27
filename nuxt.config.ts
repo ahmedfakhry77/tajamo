@@ -11,14 +11,16 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://api.tajamo.org'
-    }
+      apiBaseUrl:
+        process.env.NUXT_PUBLIC_API_BASE_URL || "https://api.tajamo.org",
+    },
   },
   devServer: {
     port: 5005,
     host: "0.0.0.0",
   },
   app: {
+    pageTransition: { name: "page", mode: "out-in" },
     head: {
       htmlAttrs: {
         lang: "es", // For Spanish
