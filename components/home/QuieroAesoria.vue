@@ -20,7 +20,7 @@
     
     <!-- Background Image -->
     <div class="absolute inset-0 z-0">
-      <NuxtImg 
+      <img 
         class="w-full h-full object-cover" 
         :src="backgroundImage" 
         :alt="$t('home.quieroAesoria.title')"

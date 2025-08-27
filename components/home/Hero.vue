@@ -19,7 +19,7 @@
      <div class="absolute bottom-0 right-0 w-full h-full opacity-80 z-0 bg-black"></div>
     <!-- Girl with Hair and Perfume SVG - Bottom Right -->
     <div class="absolute bottom-0 right-0 w-full h-full opacity-60 z-0">
-     <NuxtImg class="w-full h-full object-cover" src="/images/hero.jpg" alt="Girl with Hair and Perfume" />
+     <img class="w-full h-full object-cover" src="/images/hero.jpg" alt="Girl with Hair and Perfume" />
     </div>
   </section>
 </template>
