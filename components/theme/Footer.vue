@@ -10,7 +10,7 @@
               v-if="logo && logo !== '/images/hero.jpg'" 
               :src="logo" 
               alt="Logo" 
-              class="w-8 h-8 rounded-lg object-cover"
+              class="w-20 rounded-lg object-cover"
             />
             <div v-else class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-lg">T</span>

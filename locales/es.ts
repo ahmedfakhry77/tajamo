@@ -81,7 +81,7 @@ export default {
       },
       activeFilters: {
         title: "Filtros Activos",
-        search: "Búsqueda: \"{query}\"",
+        search: 'Búsqueda: "{query}"',
         category: "Categoría",
         price: "Precio: {min} - {max}",
         sort: "Ordenar",
@@ -172,7 +172,8 @@ export default {
     loading: "Cargando favoritos...",
     empty: {
       title: "Aún no hay favoritos",
-      subtitle: "Comienza a construir tu lista de deseos agregando productos que te encanten.",
+      subtitle:
+        "Comienza a construir tu lista de deseos agregando productos que te encanten.",
       startShopping: "Comenzar a Comprar",
     },
     actions: {
@@ -249,7 +250,8 @@ export default {
     },
     categories: {
       title: "Categorías",
-      subtitle: "Explora nuestras colecciones organizadas por tipo de fragancia",
+      subtitle:
+        "Explora nuestras colecciones organizadas por tipo de fragancia",
       womens: {
         title: "Fragancias Femeninas",
         description: "Aromas elegantes y sofisticados",
@@ -311,7 +313,8 @@ export default {
     },
     quieroAesoria: {
       title: "¿Necesitas Asesoría en Perfumes?",
-      subtitle: "Nuestros expertos te ayudarán a encontrar la fragancia perfecta que se adapte a tu personalidad y estilo de vida.",
+      subtitle:
+        "Nuestros expertos te ayudarán a encontrar la fragancia perfecta que se adapte a tu personalidad y estilo de vida.",
       contactButton: "Quiero asesoría",
     },
     banners: {
@@ -423,7 +426,7 @@ export default {
   auth: {
     welcome: "Bienvenido de vuelta",
     footer: {
-      copyright: "© 2024 Tajamo. Todos los derechos reservados."
+      copyright: "© 2024 Tajamo. Todos los derechos reservados.",
     },
     login: {
       title: "Inicia sesión en tu cuenta",
@@ -515,5 +518,18 @@ export default {
   },
   breadcrumb: {
     home: "Inicio",
+  },
+  profile: {
+    title: "Perfil",
+    subtitle: "Gestiona la información de tu cuenta",
+    personalInfo: "Información Personal",
+    changePhoto: "Cambiar Foto",
+    newImageSelected:
+      "✓ Nueva imagen seleccionada! Haz clic en 'Actualizar Perfil' para guardar.",
+    imageRequirements: "JPG, PNG o GIF. Tamaño máximo 2MB.",
+    fullName: "Nombre Completo",
+    fullNamePlaceholder: "Ingresa tu nombre completo",
+    updateProfile: "Actualizar Perfil",
+    updating: "Actualizando...",
   },
 } as const;
