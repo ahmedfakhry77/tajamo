@@ -94,9 +94,11 @@
                           :alt="user.name"
                           class="w-10 h-10 rounded-full object-cover"
                         />
-                        <div>
+                        <div class="ml-3">
                           <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
-                          <p class="text-xs text-gray-500">{{ user.email }}</p>
+                          <p class="text-xs text-gray-500" :title="user.email">
+                            {{ user.email && user.email.length > 20 ? user.email.substring(0, 16) + '...' : user.email }}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -263,7 +265,9 @@
                   />
                   <div>
                     <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
-                    <p class="text-xs text-gray-500">{{ user.email }}</p>
+                    <p class="text-xs text-gray-500" :title="user.email">
+                      {{ user.email && user.email.length > 20 ? user.email.substring(0, 20) + '...' : user.email }}
+                    </p>
                   </div>
                 </div>
               </div>

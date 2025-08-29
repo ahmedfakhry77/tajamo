@@ -4,9 +4,11 @@
       <!-- Logo/Brand -->
       <div class="text-center mb-8">
         <NuxtLink to="/" class="inline-block hover:opacity-80 transition-opacity">
-          <h1 class="text-3xl font-heading font-bold text-scimaPrimary cursor-pointer">Tajamo</h1>
+          <h1 class="text-3xl font-heading font-bold text-scimaPrimary cursor-pointer">
+            {{ $t('common.brand') }}
+          </h1>
         </NuxtLink>
-        <p class="text-secondary-600 mt-2">Welcome back</p>
+        <p class="text-secondary-600 mt-2">{{ $t('auth.welcome') }}</p>
       </div>
       
       <!-- Auth Content -->
@@ -18,7 +20,7 @@
       <!-- Footer -->
       <div class="text-center mt-6">
         <p class="text-secondary-500 text-sm">
-          © 2024 Tajamo. All rights reserved.
+          {{ $t('auth.footer.copyright') }}
         </p>
       </div>
     </div>
