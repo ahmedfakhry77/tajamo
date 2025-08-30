@@ -178,7 +178,7 @@
 
       <a
         href="#"
-        class="text-lg font-semibold leading-tight text-gray-900 hover:underline cursor-pointer"
+        class="text-lg font-semibold leading-tight text-gray-900 hover:underline cursor-pointer capitalize"
         >{{ productName }}</a
       >
 
@@ -284,7 +284,7 @@
 
               <!-- Product Details -->
               <div class="space-y-6">
-                <h2 class="text-2xl font-bold text-gray-900">
+                <h2 class="text-2xl font-bold text-gray-900 capitalize">
                   {{ productName }}
                 </h2>
                 <div class="flex items-center gap-4">
@@ -409,7 +409,7 @@
                     <!-- Add to Cart Button -->
                     <button
                       @click="addToCart"
-                      class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                      class="flex-1 bg-scimaGold text-white px-6 py-3 rounded-lg font-medium hover:bg-scimaGoldHover transition-colors flex items-center justify-center gap-2"
                     >
                       <svg
                         data-slot="icon"

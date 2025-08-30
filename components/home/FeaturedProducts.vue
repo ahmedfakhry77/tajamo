@@ -35,7 +35,7 @@
       <div v-if="products.length > 0" class="text-center mt-8">
         <NuxtLink
           to="/shop"
-          class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          class="inline-flex items-center px-6 py-3 bg-scimaGold text-white font-medium rounded-lg hover:bg-scimaGoldHover transition-colors"
         >
           {{ $t("home.featuredProducts.viewAll") }}
           <svg

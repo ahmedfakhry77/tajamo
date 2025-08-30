@@ -14,8 +14,11 @@ export default {
     extend: {
       colors: {
         // Primary colors
-        scimaGold: '#b58a3b',
-        scimaPrimary: '#065084',
+        scimaGold: '#F79323',
+        scimaGoldHover: '#E88A1F',
+        scimaPrimary: '#6C6C6C',
+        scimaPrimaryHover: '#5C5C5C',
+
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',

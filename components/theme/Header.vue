@@ -15,7 +15,7 @@
               <div v-else class="w-8 h-8 bg-scimaPrimary rounded-lg flex items-center justify-center">
                 <span class="text-white font-bold text-lg">T</span>
               </div>
-              <h1 class="text-2xl font-heading font-bold text-scimaPrimary">
+              <h1 class="text-2xl font-heading font-bold text-scimaPrimary font-delius">
                 {{ $t('common.brand') }}
               </h1>
             </NuxtLink>
