@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { useMyFetch } from "@/composables/useMyFetch"; // adjust path
+import { useMyFetch } from "@/composables/useMyFetch"; 
 
 export const useUserStore = defineStore("user", () => {
   const profile = ref(null);

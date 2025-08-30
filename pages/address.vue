@@ -72,7 +72,7 @@
                   </div>
                 </td>
                 <td class="px-4 py-4 whitespace-nowrap">
-                  <span v-if="address.default" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <span v-if="address.default === 1 || address.default === true" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     <svg class="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                     </svg>
@@ -233,7 +233,8 @@
             <div class="flex items-center">
               <input
                 id="default"
-                v-model="form.default"
+                :checked="form.default === 1 || form.default === true"
+                @change="(event) => { form.default = event.target.checked ? 1 : 0; handleDefaultChange(); }"
                 type="checkbox"
                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
@@ -291,7 +292,7 @@ const form = ref({
   address: '',
   postal_code: '',
   phone: '',
-  default: false
+  default: 0
 })
 
 // Computed properties from store
@@ -375,24 +376,21 @@ const closeModal = () => {
     address: '',
     postal_code: '',
     phone: '',
-    default: false
+    default: 0
   }
 }
 
-// Load addresses on mount
-onMounted(async () => {
-  // const token = useCookie('token')
-  // if (!token.value) {
-  //   navigateTo('/login')
-  //   return
-  // }
-  
-  try {
+// Handle default address change
+const handleDefaultChange = () => {
+  // The default status will be handled by the server when updating
+  // No need to manually update local state here
+}
+
+try {
     await addressesStore.loadAddresses()
   } catch (error) {
     console.error('Failed to load addresses:', error)
   }
-})
 </script>
 
 <style scoped>
