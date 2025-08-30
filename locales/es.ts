@@ -524,12 +524,26 @@ export default {
     subtitle: "Gestiona la información de tu cuenta",
     personalInfo: "Información Personal",
     changePhoto: "Cambiar Foto",
+    uploadPhoto: "Subir Foto",
+    uploadImage: "Subir Imagen de Perfil",
+    uploadHint: "Haz clic para seleccionar un archivo de imagen",
+    clickToUpload: "Haz clic para subir",
+    orDragAndDrop: "o arrastra y suelta",
     newImageSelected:
-      "✓ Nueva imagen seleccionada! Haz clic en 'Actualizar Perfil' para guardar.",
+      "Nueva imagen seleccionada! Haz clic en 'Actualizar Perfil' para guardar.",
     imageRequirements: "JPG, PNG o GIF. Tamaño máximo 2MB.",
     fullName: "Nombre Completo",
     fullNamePlaceholder: "Ingresa tu nombre completo",
     updateProfile: "Actualizar Perfil",
     updating: "Actualizando...",
+    success: {
+      updated: "¡Perfil actualizado exitosamente!",
+      imageSelected: "¡Imagen seleccionada! Haz clic en 'Actualizar Perfil' para guardar los cambios.",
+    },
+    errors: {
+      failedToLoad: "Error al cargar el perfil",
+      failedToUpdate: "Error al actualizar el perfil",
+      unexpectedError: "Error inesperado",
+    },
   },
 } as const;
