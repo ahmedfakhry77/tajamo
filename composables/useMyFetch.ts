@@ -8,6 +8,8 @@ export function useMyFetch<T>(url: string, options: any = {}) {
   // Attach token if exists
   const headers: Record<string, string> = {
     ...(options.headers || {}),
+    "Accept-control-allow-origin": "*",
+    "Content-Type": "application/json",
   };
   if (token.value) {
     headers.Authorization = `Bearer ${token.value}`;

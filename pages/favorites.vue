@@ -188,7 +188,6 @@ useHead({
 });
 
 const favoritesStore = useFavoritesStore()
-const productsStore = useProductsStore()
 const cartStore = useCartStore()
 
 // Helper functions

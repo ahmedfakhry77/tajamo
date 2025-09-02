@@ -57,7 +57,7 @@
             </div>
             
             <!-- Favorites Icon -->
-            <!-- <FavoritesIcon v-if="token" /> -->
+            <FavoritesIcon v-if="token" />
 
             <!-- User Menu -->
             <div class="relative hidden lg:block user-menu">

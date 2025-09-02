@@ -1,126 +1,80 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
+import { useMyFetch } from "@/composables/useMyFetch";
 
-export const useFavoritesStore = defineStore('favorites', {
+export const useFavoritesStore = defineStore("favorites", {
   state: () => ({
-    favorites: [],
+    favorites: [], // Array of product objects
     loading: false,
-    error: null
+    error: null,
   }),
 
   getters: {
-    isFavorite: (state) => (productId) => {
-      return state.favorites.includes(productId)
-    },
-    
     favoritesCount: (state) => {
-      return state.favorites.length
+      return state.favorites.length;
     },
 
     getFavoriteProducts: (state) => {
-      // This would need to be connected with products store
-      return state.favorites
+      return state.favorites;
     },
 
     hasFavorites: (state) => {
-      return state.favorites.length > 0
+      return state.favorites.length > 0;
     },
-    getProductImage: (state) => (productId) => {
-      return state.favorites.find(product => product.id === productId)?.gallery[0]
-    },
-    getProductName: (state) => (productId) => {
-      return state.favorites.find(product => product.id === productId)?.name
-    },
-    getProductCategory: (state) => (productId) => {
-      return state.favorites.find(product => product.id === productId)?.category
-    },
-    getProductPrice: (state) => (productId) => {
-      return state.favorites.find(product => product.id === productId)?.price
-    },
-    getProductCurrency: (state) => (productId) => {
-      return state.favorites.find(product => product.id === productId)?.currency
-    },
-
     isLoading: (state) => state.loading,
-    hasError: (state) => state.error !== null
+    hasError: (state) => state.error !== null,
   },
 
   actions: {
-    toggleFavorite(productId) {
-      const index = this.favorites.indexOf(productId)
-      if (index > -1) {
-        this.favorites.splice(index, 1)
-      } else {
-        this.favorites.push(productId)
-      }
-      this.saveUserPreferences()
-    },
+    async loadFavorites() {
+      this.loading = true;
+      this.error = null;
 
-    addToFavorites(productId) {
-      if (!this.favorites.includes(productId)) {
-        this.favorites.push(productId)
-        this.saveUserPreferences()
-      }
-    },
-
-    removeFromFavorites(productId) {
-      const index = this.favorites.indexOf(productId)
-      if (index > -1) {
-        this.favorites.splice(index, 1)
-        this.saveUserPreferences()
-      }
-    },
-
-    clearFavorites() {
-      this.favorites = []
-      this.saveUserPreferences()
-    },
-
-    // User preferences persistence
-    saveUserPreferences() {
       try {
-        localStorage.setItem('favorites', JSON.stringify(this.favorites))
-      } catch (error) {
-        console.error('Failed to save favorites:', error)
-        this.error = 'Failed to save favorites'
-      }
-    },
+        const { data, error: fetchError } = await useMyFetch("/favorites");
 
-    loadUserPreferences() {
-      try {
-        const favorites = localStorage.getItem('favorites')
-        if (favorites) {
-          this.favorites = JSON.parse(favorites)
+        if (fetchError.value) {
+          this.error = fetchError.value.message || "Failed to load favorites";
+        } else {
+          console.log(data.value.data);
+          this.favorites = data.value.data;
         }
-        this.error = null
       } catch (error) {
-        console.error('Failed to load favorites:', error)
-        this.error = 'Failed to load favorites'
-      }
-    },
-
-    async syncFavorites() {
-      // Replace with actual API call to sync with backend
-      this.loading = true
-      try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 500))
-        this.error = null
-      } catch (error) {
-        this.error = error.message
-        console.error('Failed to sync favorites:', error)
+        this.error = error.message || "Failed to load favorites";
+        console.error("Failed to load favorites:", error);
+        throw error;
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
+    async toggleFavorite(product) {
+      try {
+        const { data, error: fetchError } = await useMyFetch(
+          `/favorites/${product.id}/toggle`,
+          {
+            method: "GET",
+          }
+        );
 
-    clearError() {
-      this.error = null
+        if (fetchError.value) {
+          this.error = fetchError.value.message || "Failed to toggle favorite";
+        } else {
+          if (
+            this.favorites.some((favorite) => favorite.id === product.id)
+          ) {
+            this.favorites = this.favorites.filter(
+              (favorite) => favorite.id !== product.id
+            );
+          } else {
+            this.favorites.push(product);
+          }
+        }
+      } catch (error) {
+        this.error = error.message || "Failed to toggle favorite";
+        console.error("Failed to toggle favorite:", error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
     },
-
-    resetStore() {
-      this.favorites = []
-      this.loading = false
-      this.error = null
-    }
-  }
-})
+  },
+});

@@ -84,7 +84,7 @@
               />
             </svg>
           </span>
-          
+
           <!-- Cart quantity indicator (if product is in cart) -->
           <div
             v-if="isInCart"
@@ -99,18 +99,33 @@
           class="absolute w-full bottom-0 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-80 transition-opacity duration-300 bg-white"
         >
           <!-- Quantity Selector (only show if not in cart) -->
-          <div v-if="!isInCart" class="flex items-center justify-center gap-2 py-2 border-b border-gray-100">
+          <div
+            v-if="!isInCart"
+            class="flex items-center justify-center gap-2 py-2 border-b border-gray-100"
+          >
             <button
               @click="decrementQuantity"
               class="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors"
               :disabled="selectedQuantity === 1"
               aria-label="Decrement quantity"
             >
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20 12H4"
+                ></path>
               </svg>
             </button>
-            <span class="text-sm font-medium text-gray-700 min-w-[2rem] text-center">
+            <span
+              class="text-sm font-medium text-gray-700 min-w-[2rem] text-center"
+            >
               {{ selectedQuantity }}
             </span>
             <button
@@ -119,12 +134,22 @@
               :disabled="selectedQuantity >= stock"
               aria-label="Increment quantity"
             >
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                ></path>
               </svg>
             </button>
           </div>
-          
+
           <!-- Add to Cart Button -->
           <button
             type="button"
@@ -354,7 +379,9 @@
                       <button
                         @click="decrementQuantity"
                         class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-colors"
-                        :disabled="isInCart ? cartQuantity === 0 : selectedQuantity === 1"
+                        :disabled="
+                          isInCart ? cartQuantity === 0 : selectedQuantity === 1
+                        "
                       >
                         <svg
                           class="w-4 h-4"
@@ -370,9 +397,12 @@
                           ></path>
                         </svg>
                       </button>
-                      
+
                       <!-- Quantity Display/Input -->
-                      <div v-if="isInCart" class="px-4 py-2 text-gray-900 font-medium min-w-[3rem] text-center">
+                      <div
+                        v-if="isInCart"
+                        class="px-4 py-2 text-gray-900 font-medium min-w-[3rem] text-center"
+                      >
                         {{ cartQuantity }}
                       </div>
                       <input
@@ -384,7 +414,7 @@
                         :max="stock"
                         class="px-4 py-2 text-gray-900 font-medium min-w-[3rem] text-center border-none focus:outline-none focus:ring-0"
                       />
-                      
+
                       <button
                         @click="incrementQuantity"
                         class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-colors"
@@ -463,8 +493,18 @@
                     to="/checkout"
                     class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
                   >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
                     </svg>
                     Proceed to Checkout
                   </NuxtLink>
@@ -504,7 +544,7 @@ const props = defineProps({
 // Stores
 const favoritesStore = useFavoritesStore();
 const cartStore = useCartStore();
-const token = useCookie('token')
+const token = useCookie("token");
 // Local state
 const isHovered = ref(false);
 const showProductDialog = ref(false);
@@ -536,7 +576,9 @@ const category = computed(() => props.product.category);
 const stock = computed(() => props.product.stock);
 
 const isFavorite = computed(() => {
-  return favoritesStore.isFavorite(props.product.id);
+  return favoritesStore.getFavoriteProducts.some(
+    (product) => product.id === props.product.id
+  );
 });
 
 const cartItem = computed(() => {
@@ -563,11 +605,20 @@ const closeProductDialog = () => {
 };
 
 const toggleFavorite = () => {
-  favoritesStore.toggleFavorite(props.product.id);
-  snackbar.add({
-    type: "success",
-    text: "Producto agregado a favoritos",
-  });
+  favoritesStore
+    .toggleFavorite(props.product)
+    .then(() => {
+      snackbar.add({
+        type: "success",
+        text: "Producto agregado a favoritos",
+      });
+    })
+    .catch(() => {
+      snackbar.add({
+        type: "error",
+        text: "Error al agregar producto a favoritos",
+      });
+    });
 };
 
 const addToCart = () => {
