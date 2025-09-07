@@ -70,19 +70,9 @@ export const useAddressesStore = defineStore("addresses", {
       this.clearError();
 
       try {
-        // Convert addressData to FormData
-        const formData = new FormData();
-        formData.append("name", addressData.name);
-        formData.append("governorate", addressData.governorate);
-        formData.append("city", addressData.city);
-        formData.append("address", addressData.address);
-        formData.append("postal_code", addressData.postal_code);
-        formData.append("phone", addressData.phone);
-        formData.append("default", addressData.default ? "1" : "0");
-
         const { data, error: fetchError } = await useMyFetch("/addresses", {
           method: "POST",
-          body: formData,
+          body: addressData,
         });
 
         if (fetchError.value) {
@@ -90,7 +80,7 @@ export const useAddressesStore = defineStore("addresses", {
         }
 
         // Add to state
-        this.addresses.push(addressData);
+        this.addresses.push(data.value.data);
 
         return addressData;
       } catch (error) {
@@ -111,20 +101,12 @@ export const useAddressesStore = defineStore("addresses", {
 
       try {
         // Convert addressData to FormData
-        const formData = new FormData();
-        formData.append("name", addressData.name);
-        formData.append("governorate", addressData.governorate);
-        formData.append("city", addressData.city);
-        formData.append("address", addressData.address);
-        formData.append("postal_code", addressData.postal_code);
-        formData.append("phone", addressData.phone);
-        formData.append("default", addressData.default ? "1" : "0");
 
         const { data, error: fetchError } = await useMyFetch(
           `/addresses/${id}`,
           {
             method: "PUT",
-            body: formData,
+            body: addressData,
           }
         );
 

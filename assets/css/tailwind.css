@@ -1,7 +1,9 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Delius&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Delius&display=swap');
+
 
 /* Force light mode - remove dark class if it exists */
 html.dark {

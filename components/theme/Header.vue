@@ -53,7 +53,7 @@
           <div class="flex items-center space-x-4">
             <!-- Cart Icon -->
             <div class="h-full">
-              <!-- <CartIcon class="h-full" /> -->
+              <CartIcon  class="h-full" />
             </div>
             
             <!-- Favorites Icon -->

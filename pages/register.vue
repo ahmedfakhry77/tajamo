@@ -293,7 +293,6 @@ const register = async () => {
         text: "Registration successful! Welcome to Tajamo.",
       });
       
-      
       await navigateTo("/");
     } else {
       snackbar.add({

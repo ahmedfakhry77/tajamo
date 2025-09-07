@@ -32,7 +32,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineEmits } from "vue";
 import { useUserStore } from "@/stores/module/user";
 const emit = defineEmits(["update-image", "file-selected"]);
 const profileImage = ref<string>("");

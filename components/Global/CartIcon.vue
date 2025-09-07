@@ -23,10 +23,12 @@
       </svg>
       <!-- Cart Count Badge -->
       <span
-        v-if="cartItemsCount > 0"
+        v-if="cartStore?.uniqueItemsCount > 0"
         class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium"
       >
-        {{ cartItemsCount > 99 ? "99+" : cartItemsCount }}
+        {{
+          cartStore?.uniqueItemsCount > 99 ? "99+" : cartStore?.uniqueItemsCount
+        }}
       </span>
     </button>
 
@@ -61,40 +63,40 @@
           </button>
         </div>
 
-        <div v-if="cartItems.length === 0" class="text-center py-8">
+        <div v-if="cartStore?.uniqueItemsCount === 0" class="text-center py-8">
           <p class="text-gray-500">Your cart is empty</p>
         </div>
 
         <div v-else class="space-y-3 max-h-64 overflow-y-auto">
           <div
-            v-for="item in cartItems"
-            :key="item.productId"
+            v-for="item in cartStore?.getCartItems"
+            :key="item.id"
             class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
           >
             <div
               class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center"
             >
               <img
-                :src="getProductImage(item.productId)"
+                :src="item.thumbnail"
                 alt="Product Image"
                 class="w-full h-full object-cover rounded"
               />
             </div>
             <div class="flex-1">
               <p class="text-sm font-medium text-gray-900">
-                {{ getProductName(item.productId) }}
+                {{ item.name?.es || item.name?.en || "Product" }}
               </p>
               <p class="text-xs text-gray-500">
-                {{ getProductCategory(item.productId) }}
+                {{ item.category?.slug || "Category" }}
               </p>
               <p class="text-xs text-gray-700 font-medium">
-                {{ getProductPrice(item.productId) }}
-                {{ getProductCurrency(item.productId) }}
+                {{ item.price?.after_discount || "0" }}
+                {{ item.price?.currency.es || "" }}
               </p>
               <p class="text-xs text-gray-500">Qty: {{ item.quantity }}</p>
             </div>
             <button
-              @click="cartStore.removeFromCart(item.productId)"
+              @click="cartStore.removeFromCart(item.id)"
               class="text-red-500 hover:text-red-700"
             >
               <svg
@@ -115,13 +117,14 @@
         </div>
 
         <div
-          v-if="cartItems.length > 0"
+          v-if="cartStore.uniqueItemsCount > 0"
           class="mt-4 pt-4 border-t border-gray-200"
         >
           <div class="flex items-center justify-between mb-4">
             <span class="text-lg font-semibold text-gray-900">Total:</span>
             <span class="text-lg font-semibold text-gray-900"
-              >${{ cartTotal.toFixed(2) }}</span
+              >{{ Number(cartTotal)?.toFixed(2) }}
+              {{ cartStore.getCartItems[0].price?.currency.es }}</span
             >
           </div>
           <button
@@ -147,40 +150,11 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useCartStore } from "~/stores/module/cart";
 
 const cartStore = useCartStore();
+await cartStore.loadCart();
 const showCartDropdown = ref(false);
 
 // Computed properties
-const cartItemsCount = computed(() => cartStore.cartItemsCount);
-const cartItems = computed(() => cartStore.getCartItems);
 const cartTotal = computed(() => cartStore.cartTotal);
-
-// Helper functions to get product information
-const getProductImage = (productId) => {
-  const product = productsStore.getProductById(productId);
-  return product ? product.gallery[0] || product.thumbnail || "" : "";
-};
-
-const getProductName = (productId) => {
-  const product = productsStore.getProductById(productId);
-  return product
-    ? product.name?.es || product.name?.en || "Product"
-    : "Product";
-};
-
-const getProductCategory = (productId) => {
-  const product = productsStore.getProductById(productId);
-  return product ? product.category?.slug || "Category" : "Category";
-};
-
-const getProductPrice = (productId) => {
-  const product = productsStore.getProductById(productId);
-  return product ? product.price?.after_discount || "0" : "0";
-};
-
-const getProductCurrency = (productId) => {
-  const product = productsStore.getProductById(productId);
-  return product ? product.price?.currency || "" : "";
-};
 
 // Methods
 const toggleCart = () => {
@@ -211,9 +185,7 @@ const handleClickOutside = (event) => {
 
 onMounted(async () => {
   // Load products if not already loaded
-  if (productsStore.products.length === 0) {
-    await productsStore.loadProducts();
-  }
+
   document.addEventListener("click", handleClickOutside);
 });
 

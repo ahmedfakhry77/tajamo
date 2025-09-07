@@ -22,6 +22,8 @@
 
 <script setup>
 import { useUserStore } from "@/stores/module/user";
+import { useCartStore } from "@/stores/module/cart";
+
 // Default layout logic can be added here
 const {
   data: layoutData,
@@ -29,9 +31,29 @@ const {
   error,
 } = await useMyFetch("/general/layout");
 const userStore = useUserStore();
+const cartStore = useCartStore();
+
 if (layoutData.value.user) {
   userStore.profile = layoutData.value.user;
 }
+
+// If user is logged in (token found), sync cart
+if (process.client) {
+  const token = useCookie("token");
+  const cartCookie = useCookie("cart");
+  if (token.value && cartCookie.value) {
+    try {
+      await cartStore.onUserLogin();
+      await cartStore.loadCart();
+      console.log("Cart synced on app start - user was already logged in");
+    } catch (error) {
+      console.error("Failed to sync cart on app start:", error);
+    }
+  } else {
+    await cartStore.loadCart();
+  }
+}
+
 // Provide layout data to child components
 provide("layoutData", layoutData);
 </script>
