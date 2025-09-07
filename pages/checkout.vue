@@ -6,7 +6,7 @@
         :breadcrumbs="[
           { name: 'Shop', path: '/shop' },
           { name: 'Cart', path: '/cart' },
-          { name: 'Checkout', path: '/checkout' }
+          { name: 'Checkout', path: '/checkout' },
         ]"
       />
 
@@ -17,16 +17,73 @@
       </div>
 
       <!-- Main Content -->
-      <div class="flex flex-col lg:flex-row gap-8">
-        <!-- Left Side - Checkout Form -->
-        <div class="flex-1">
+      <div class="flex flex-col lg:flex-row gap-8" v-if="cartItems.length > 0">
+        <!-- Left Side - Cart Items & Address -->
+        <div class="flex-1 space-y-6">
+          <!-- Cart Items -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+              <h2 class="text-lg font-semibold text-gray-900">
+                Order Items ({{ cartItems.length }})
+              </h2>
+            </div>
+
+            <div class="divide-y divide-gray-200">
+              <div
+                v-for="item in cartItems"
+                :key="item.id"
+                class="p-6 flex items-center gap-4"
+              >
+                <!-- Product Image -->
+                <div
+                  class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <img
+                    :src="item.thumbnail"
+                    alt="Product Image"
+                    class="w-full h-full object-cover rounded-lg"
+                  />
+                </div>
+
+                <!-- Product Info -->
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-lg font-medium text-gray-900 truncate">
+                    {{ item.name?.es || item.name?.en || "Product" }}
+                  </h3>
+                  <p class="text-sm text-gray-500 mt-1">
+                    {{ item.category?.slug || "Category" }}
+                  </p>
+                  <p class="text-sm text-gray-600 mt-1">
+                    Quantity: {{ item.quantity }}
+                  </p>
+                  <p class="text-lg font-semibold text-gray-900 mt-2">
+                    {{ item.price?.after_discount || "0" }}
+                    {{ item.price?.currency.es || "" }}
+                  </p>
+                </div>
+
+                <!-- Total Price -->
+                <div class="text-right">
+                  <p class="text-lg font-semibold text-gray-900">
+                    {{ formatPrice(getProductPrice(item) * item.quantity) }} {{ item.price?.currency.es || "" }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shipping Information -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-6">Shipping Information</h2>
-            
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">
+              Shipping Information
+            </h2>
+
             <!-- Address Selection -->
             <div class="mb-6">
-              <h3 class="text-lg font-medium text-gray-700 mb-4">Select Delivery Address</h3>
-              
+              <h3 class="text-lg font-medium text-gray-700 mb-4">
+                Select Delivery Address
+              </h3>
+
               <!-- Address List -->
               <div v-if="addresses.length > 0" class="space-y-3">
                 <div
@@ -43,15 +100,25 @@
                   <div class="flex items-start justify-between">
                     <div class="flex-1">
                       <div class="flex items-center gap-2 mb-2">
-                        <span class="font-medium text-gray-900">{{ address.name }}</span>
-                        <span v-if="address.isDefault" class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                        <span class="font-medium text-gray-900">{{
+                          address.name
+                        }}</span>
+                        <span
+                          v-if="address.default"
+                          class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                        >
                           Default
                         </span>
                       </div>
                       <p class="text-gray-600 text-sm">{{ address.street }}</p>
-                      <p class="text-gray-600 text-sm">{{ address.city }}, {{ address.state }} {{ address.zipCode }}</p>
+                      <p class="text-gray-600 text-sm">
+                        {{ address.city }}, {{ address.state }}
+                        {{ address.zipCode }}
+                      </p>
                       <p class="text-gray-600 text-sm">{{ address.country }}</p>
-                      <p class="text-gray-600 text-sm">Phone: {{ address.phone }}</p>
+                      <p class="text-gray-600 text-sm">
+                        Phone: {{ address.phone }}
+                      </p>
                     </div>
                     <div class="ml-4">
                       <div
@@ -71,17 +138,31 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- No Addresses -->
               <div v-else class="text-center py-8">
                 <div class="w-16 h-16 mx-auto mb-4 text-gray-300">
                   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    ></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
                   </svg>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">No addresses found</h3>
-                <p class="text-gray-600 mb-4">Please add a delivery address to continue</p>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">
+                  No addresses found
+                </h3>
+                <p class="text-gray-600 mb-4">
+                  Please add a delivery address to continue
+                </p>
                 <NuxtLink
                   to="/address"
                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
@@ -97,8 +178,18 @@
                 to="/address"
                 class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  ></path>
                 </svg>
                 Add New Address
               </NuxtLink>
@@ -106,7 +197,10 @@
 
             <!-- Order Notes -->
             <div class="mb-6">
-              <label for="orderNotes" class="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                for="orderNotes"
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Order Notes (Optional)
               </label>
               <textarea
@@ -120,55 +214,37 @@
           </div>
         </div>
 
-        <!-- Right Side - Cart Summary -->
+        <!-- Right Side - Order Summary -->
         <div class="lg:w-96">
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-8">
-            <h2 class="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
-            
-            <!-- Cart Items -->
-            <div class="space-y-4 mb-6">
-              <div
-                v-for="item in cartItems"
-                :key="item.productId"
-                class="flex items-center gap-3"
-              >
-                <div class="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0">
-                  <img
-                    :src="getProductImage(item.productId)"
-                    :alt="getProductName(item.productId)"
-                    class="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-sm font-medium text-gray-900 truncate">
-                    {{ getProductName(item.productId) }}
-                  </h4>
-                  <p class="text-sm text-gray-500">Qty: {{ item.quantity }}</p>
-                  <p class="text-sm font-medium text-gray-900">
-                    {{ formatPrice(getProductPrice(item.productId) * item.quantity) }}
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div
+            class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-8"
+          >
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">
+              Order Summary
+            </h2>
 
             <!-- Price Breakdown -->
-            <div class="border-t border-gray-200 pt-4 space-y-3">
+            <div class="space-y-3 mb-6">
               <div class="flex justify-between text-sm text-gray-600">
                 <span>Subtotal</span>
                 <span>{{ formatPrice(cartSubtotal) }}</span>
               </div>
               <div class="flex justify-between text-sm text-gray-600">
                 <span>Shipping</span>
-                <span>{{ formatPrice(shippingCost) }}</span>
+                <span v-if="shippingCost">{{ formatPrice(shippingCost) }} {{ cartItems[0].price?.currency.es }}</span>
+                <span v-else>0 {{ cartItems[0].price?.currency.es }}</span>
               </div>
-              <div v-if="discountAmount > 0" class="flex justify-between text-sm text-green-600">
+              <div class="flex justify-between text-sm text-green-600">
                 <span>Discount</span>
-                <span>-{{ formatPrice(discountAmount) }}</span>
+                <span v-if="discountAmount">-{{ formatPrice(discountAmount) }}</span>
+                <span v-else>0 {{ cartItems[0].price?.currency.es }}</span>
               </div>
               <div class="border-t border-gray-200 pt-3">
-                <div class="flex justify-between text-lg font-semibold text-gray-900">
+                <div
+                  class="flex justify-between text-lg font-semibold text-gray-900"
+                >
                   <span>Total</span>
-                  <span>{{ formatPrice(cartTotal) }}</span>
+                  <span>{{ formatPrice(cartTotal) }} {{ cartItems[0].price?.currency.es }}</span>
                 </div>
               </div>
             </div>
@@ -177,9 +253,13 @@
             <button
               @click="proceedToPayment"
               :disabled="!canProceedToPayment"
-              class="w-full mt-6 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              class="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {{ canProceedToPayment ? 'Proceed to Payment' : 'Select Address to Continue' }}
+              {{
+                canProceedToPayment
+                  ? "Proceed to Payment"
+                  : "Select Address to Continue"
+              }}
             </button>
 
             <!-- Continue Shopping -->
@@ -199,25 +279,26 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import { useCartStore } from '~/stores/module/cart';
-import { useAddressesStore } from '~/stores/module/addresses';
-import { useProductsStore } from '~/stores/module/products';
-import Breadcrumb from '~/components/Global/Breadcrumb.vue';
+import { computed, onMounted, ref } from "vue";
+import { useCartStore } from "~/stores/module/cart";
+import { useAddressesStore } from "~/stores/module/addresses";
+import Breadcrumb from "~/components/global/Breadcrumb.vue";
 
 // Set page title
 useHead({
   title: "Checkout - Tajamo",
 });
-
+definePageMeta({
+  layout: "default",
+  middleware: "auth",
+});
 // Stores
 const cartStore = useCartStore();
 const addressesStore = useAddressesStore();
-const productsStore = useProductsStore();
 
 // Reactive state
 const selectedAddress = ref(null);
-const orderNotes = ref('');
+const orderNotes = ref("");
 
 // Computed properties
 const cartItems = computed(() => cartStore.getCartItems);
@@ -225,26 +306,19 @@ const addresses = computed(() => addressesStore.addresses);
 
 const cartSubtotal = computed(() => {
   return cartItems.value.reduce((total, item) => {
-    const product = productsStore.getProductById(item.productId);
-    if (product) {
-      const price = parseFloat(product.price.after_discount.replace(/[^\d.]/g, ''));
-      return total + (price * item.quantity);
-    }
-    return total;
+    const price = parseFloat(
+      item.price?.after_discount?.replace(/[^\d.]/g, "") || "0"
+    );
+    return total + price * item.quantity;
   }, 0);
 });
 
 const shippingCost = computed(() => {
-  // Free shipping for orders over 5000, otherwise 500
-  return cartSubtotal.value > 5000 ? 0 : 500;
+  return 0;
 });
 
 const discountAmount = computed(() => {
-  // Example discount logic - 10% off for orders over 3000
-  if (cartSubtotal.value > 3000) {
-    return cartSubtotal.value * 0.1;
-  }
-  return 0;
+  return false;
 });
 
 const cartTotal = computed(() => {
@@ -260,65 +334,25 @@ const selectAddress = (address) => {
   selectedAddress.value = address;
 };
 
-const getProductImage = (productId) => {
-  const product = productsStore.getProductById(productId);
-  return product?.thumbnail || '/images/placeholder.jpg';
-};
-
-const getProductName = (productId) => {
-  const product = productsStore.getProductById(productId);
-  return product?.name?.es || product?.name?.en || 'Product';
-};
-
-const getProductPrice = (productId) => {
-  const product = productsStore.getProductById(productId);
-  if (product) {
-    return parseFloat(product.price.after_discount.replace(/[^\d.]/g, ''));
-  }
-  return 0;
+const getProductPrice = (item) => {
+  return parseFloat(item.price?.after_discount?.replace(/[^\d.]/g, "") || "0");
 };
 
 const formatPrice = (price) => {
-  return `$${(price / 1000).toFixed(2)}`;
+  return `${price.toFixed(3)}`;
 };
 
 const proceedToPayment = () => {
   if (!canProceedToPayment.value) return;
-  
-  // Here you would typically:
-  // 1. Save the order details
-  // 2. Redirect to payment gateway
-  // 3. Or show payment form
-  
-  console.log('Proceeding to payment with:', {
-    address: selectedAddress.value,
-    items: cartItems.value,
-    total: cartTotal.value,
-    notes: orderNotes.value
-  });
-  
-  // For now, just show an alert
-  alert('Payment functionality would be implemented here. This is a demo checkout page.');
+  alert("Proceeding to payment");
 };
 
 // Load data on mount
-onMounted(async () => {
-  // Load products if not already loaded
-  if (productsStore.products.length === 0) {
-    await productsStore.loadProducts();
-  }
-  
-  // Load addresses if not already loaded
-  if (addressesStore.addresses.length === 0) {
-    await addressesStore.loadAddresses();
-  }
-  
-  // Set default address if available
-  if (addresses.value.length > 0 && !selectedAddress.value) {
-    const defaultAddress = addresses.value.find(addr => addr.isDefault);
-    selectedAddress.value = defaultAddress || addresses.value[0];
-  }
-});
+Promise.all([
+  addressesStore.loadAddresses(),
+  cartStore.loadCart(),
+]);
+selectedAddress.value = addresses.value.find((addr) => addr.default);
 </script>
 
 <style scoped>
