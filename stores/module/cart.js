@@ -409,7 +409,6 @@ export const useCartStore = defineStore("cart", {
           
           this.appliedCoupons.push(couponData);
           this.discountAmount += response.amount;
-          this.summary.total -= response.amount;
 
           return { 
             success: true, 

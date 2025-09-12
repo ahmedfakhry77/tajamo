@@ -302,7 +302,7 @@
                 >
                   <span>Total</span>
                   <span
-                    >{{ formatPrice(cartTotal) }}
+                    >{{ formatPrice(cartTotal - discountAmount)  }}
                     {{ cartItems[0].price?.currency.es }}</span
                   >
                 </div>
@@ -412,21 +412,32 @@ const formatPrice = (price) => {
   return `${price.toFixed(3)}`;
 };
 
-const proceedToPayment = () => {
+const proceedToPayment = async () => {
   if (!canProceedToPayment.value) return;
   
-  // Format coupons array
-  const coupons = appliedCoupons.value.map(coupon => ({
-    code: coupon.code,
-    amount: coupon.amount
-  }));
-  
+  // Create base payload
   let payload = {
     address: selectedAddress.value.id,
     payment_method: paymentMethod.value,
     notes: orderNotes.value,
-    coupons: coupons,
   };
+  
+  // Add coupons as flat properties
+  appliedCoupons.value.forEach((coupon, index) => {
+    payload[`coupons[${index}]`] = coupon.code;
+  });
+  const { data, error } = await useMyFetch("/orders", {
+    method: "POST",
+    body: payload,
+  });
+  if (error.value) {
+    console.error("Failed to create order:", error.value.message);
+  }
+  if (data.value) {
+    console.log("Order created successfully:", data.value.payment_url);
+    window.location.href = data.value.payment_url;
+  }
+
   console.log(payload);
 };
 
