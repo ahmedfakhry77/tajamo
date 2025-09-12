@@ -6,11 +6,19 @@ export const useCartStore = defineStore("cart", {
     loading: false,
     error: null,
     isLoggedIn: false,
+    summary: {
+      subtotal: 0,
+      tax: 0,
+      tax_rate: 0,
+      total: 0,
+    },
+    appliedCoupons: [],
+    discountAmount: 0,
   }),
 
   getters: {
     cartTotal: (state) => {
-      return state.cart
+      const subtotal = state.cart
         .reduce((total, item) => {
           // clean string (remove commas/spaces)
           const price = parseFloat(
@@ -18,10 +26,13 @@ export const useCartStore = defineStore("cart", {
           );
 
           return total + item.quantity * (price || 0);
-        }, 0)
-        .toFixed(3);
+        }, 0);
+      
+      return (subtotal - state.discountAmount).toFixed(3);
     },
-
+    cartSummary: (state) => {
+      return state.summary;
+    },
     getCartItem: (state) => (productId) => {
       return state.cart.find((item) => item.id === productId);
     },
@@ -40,6 +51,10 @@ export const useCartStore = defineStore("cart", {
 
     isLoading: (state) => state.loading,
     hasError: (state) => state.error !== null,
+    
+    // Coupon getters
+    appliedCouponsList: (state) => state.appliedCoupons,
+    totalDiscount: (state) => state.discountAmount,
   },
 
   actions: {
@@ -113,7 +128,8 @@ export const useCartStore = defineStore("cart", {
           // Fallback to cookie cart if server fails
           this.loadCartFromCookies();
         } else {
-          this.cart = data.value?.data || [];
+          this.cart = data.value?.products || [];
+          this.summary = data.value?.summary || {};
           const cartCookie = useCookie("cart");
           cartCookie.value = [];
           this.loading = false;
@@ -142,8 +158,6 @@ export const useCartStore = defineStore("cart", {
           });
         }
       }
-
-     
 
       // If logged in, also send to server
       if (this.isLoggedIn) {
@@ -349,6 +363,108 @@ export const useCartStore = defineStore("cart", {
       if (!this.isLoggedIn) {
         this.saveCartToCookies();
       }
+    },
+
+    // Apply coupon code
+    async applyCoupon(code) {
+      try {
+        this.loading = true;
+        this.error = null;
+
+        const { data, error } = await useMyFetch("/coupons", {
+          method: "POST",
+          body: { code: code.trim() },
+        });
+
+        if (error.value) {
+          this.error =  "Failed to apply coupon";
+          return { success: false, message: this.error };
+        }
+
+        const response = data.value;
+        
+        // Handle API error response format
+        if (response.status === false) {
+          const errorMessage =  "Failed to apply coupon";
+          console.log('errorMessage :>> ', errorMessage);
+          this.error = errorMessage;
+          return { success: false, message: errorMessage };
+        }
+        
+        if (response.status === true && response.available) {
+          // Check if coupon is already applied
+          const existingCoupon = this.appliedCoupons.find(coupon => coupon.code === code);
+          
+          if (existingCoupon) {
+            this.error = "Coupon already applied";
+            return { success: false, message: "Coupon already applied" };
+          }
+
+          // Add coupon to applied list
+          const couponData = {
+            code: code,
+            amount: response.amount,
+            message: response.message,
+          };
+          
+          this.appliedCoupons.push(couponData);
+          this.discountAmount += response.amount;
+          this.summary.total -= response.amount;
+
+          return { 
+            success: true, 
+            message: response.message, 
+            amount: response.amount 
+          };
+        } else {
+          // Handle error response format
+          const errorMessage ="Coupon not available";
+          this.error = errorMessage;
+          return { success: false, message: errorMessage };
+        }
+      } catch (err) {
+        this.error = "Failed to apply coupon";
+        console.error("Apply coupon error:", err);
+        return { success: false, message: this.error };
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Remove coupon code
+    removeCoupon(code) {
+      const couponIndex = this.appliedCoupons.findIndex(coupon => coupon.code === code);
+      
+      if (couponIndex > -1) {
+        const coupon = this.appliedCoupons[couponIndex];
+        
+        // Remove from applied coupons
+        this.appliedCoupons.splice(couponIndex, 1);
+        
+        // Subtract amount from total discount
+        this.discountAmount -= coupon.amount;
+        
+        // Ensure discount doesn't go below 0
+        if (this.discountAmount < 0) {
+          this.discountAmount = 0;
+        }
+
+        return { success: true, message: "Coupon removed successfully" };
+      }
+      
+      return { success: false, message: "Coupon not found" };
+    },
+
+    // Clear all applied coupons
+    clearAllCoupons() {
+      this.appliedCoupons = [];
+      this.discountAmount = 0;
+      return { success: true, message: "All coupons removed" };
+    },
+
+    // Get coupon by code
+    getCouponByCode(code) {
+      return this.appliedCoupons.find(coupon => coupon.code === code);
     },
   },
 });

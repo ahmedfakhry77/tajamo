@@ -33,8 +33,8 @@ const {
 const userStore = useUserStore();
 const cartStore = useCartStore();
 
-if (layoutData.value.user) {
-  userStore.profile = layoutData.value.user;
+if (layoutData.value?.user) {
+  userStore.profile = layoutData.value?.user;
 }
 
 // If user is logged in (token found), sync cart

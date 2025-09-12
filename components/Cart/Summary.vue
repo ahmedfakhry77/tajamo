@@ -8,20 +8,34 @@
       <div class="space-y-3 mb-6">
         <div class="flex justify-between text-sm text-gray-600">
           <span>{{ $t("cart.summary.subtotal") }}</span>
-          <span>{{ cartStore.cartTotal }}l</span>
+          <span
+            >{{
+              cartStore.cartSummary?.subtotal
+                ? cartStore.cartSummary?.subtotal
+                : cartStore.cartTotal
+            }}
+            {{ cartStore.getCartItems[0].price?.currency.es }}</span
+          >
         </div>
-        <div class="flex justify-between text-sm text-gray-600">
-          <span>{{ $t("cart.summary.shipping") }}</span>
-          <span>{{ $t("cart.summary.free") }}</span>
-        </div>
+
         <div class="flex justify-between text-sm text-gray-600">
           <span>{{ $t("cart.summary.tax") }}</span>
-          <span>{{ $t("cart.summary.calculatedAtCheckout") }}</span>
+          <span
+            >{{ cartStore.cartSummary?.tax ? cartStore.cartSummary?.tax : 0 }}
+            {{ cartStore.getCartItems[0].price?.currency.es }}</span
+          >
         </div>
         <div class="border-t border-gray-200 pt-3">
           <div class="flex justify-between text-lg font-semibold text-gray-900">
             <span>{{ $t("cart.summary.total") }}</span>
-            <span>{{ cartStore.cartTotal }}</span>
+            <span
+              >{{
+                cartStore.cartSummary?.total
+                  ? cartStore.cartSummary?.total
+                  : cartStore.cartTotal
+              }}
+              {{ cartStore.getCartItems[0].price?.currency.es }}</span
+            >
           </div>
         </div>
       </div>

@@ -65,7 +65,8 @@
                 <!-- Total Price -->
                 <div class="text-right">
                   <p class="text-lg font-semibold text-gray-900">
-                    {{ formatPrice(getProductPrice(item) * item.quantity) }} {{ item.price?.currency.es || "" }}
+                    {{ formatPrice(getProductPrice(item) * item.quantity) }}
+                    {{ item.price?.currency.es || "" }}
                   </p>
                 </div>
               </div>
@@ -231,29 +232,96 @@
               </div>
               <div class="flex justify-between text-sm text-gray-600">
                 <span>Shipping</span>
-                <span v-if="shippingCost">{{ formatPrice(shippingCost) }} {{ cartItems[0].price?.currency.es }}</span>
+                <span v-if="shippingCost"
+                  >{{ formatPrice(shippingCost) }}
+                  {{ cartItems[0].price?.currency.es }}</span
+                >
                 <span v-else>0 {{ cartItems[0].price?.currency.es }}</span>
               </div>
+
+              <!-- tax -->
+              <div class="flex justify-between text-sm text-gray-600">
+                <span>Tax</span>
+                <span>{{ formatPrice(cartStore.cartSummary?.tax) }}
+                {{ cartItems[0].price?.currency.es }}</span>
+              </div>
+
+               <div class="space-y-3">
+                 <!-- Coupon Input -->
+                 <div class="flex items-center gap-2">
+                   <input 
+                     type="text" 
+                     v-model="couponCode" 
+                     class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                     placeholder="Enter coupon code" 
+                   />
+                   <button 
+                     @click="applyCoupon" 
+                     class="px-4 py-2 bg-scimaGold text-white font-medium rounded-lg hover:bg-scimaGold/90 transition-colors whitespace-nowrap"
+                   >
+                     Apply
+                   </button>
+                 </div>
+
+                 <!-- Success/Error Messages -->
+                 <div v-if="couponSuccess" class="text-sm text-green-600 bg-green-50 p-2 rounded-lg">
+                   {{ couponSuccess }}
+                 </div>
+                 <div v-if="couponError" class="text-sm text-red-600 bg-red-50 p-2 rounded-lg">
+                   {{ couponError }}
+                 </div>
+
+                 <!-- Applied Coupons List -->
+                 <div v-if="appliedCoupons.length > 0" class="space-y-2">
+                   <h4 class="text-sm font-medium text-gray-700">Applied Coupons:</h4>
+                   <div v-for="coupon in appliedCoupons" :key="coupon.code" 
+                        class="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-2">
+                     <div class="flex items-center gap-2">
+                       <span class="text-sm font-medium text-green-800">{{ coupon.code }}</span>
+                       <span class="text-sm text-green-600">-{{ formatPrice(coupon.amount) }}</span>
+                     </div>
+                     <button 
+                       @click="removeCoupon(coupon.code)"
+                       class="text-red-500 hover:text-red-700 text-sm font-medium"
+                     >
+                       Remove
+                     </button>
+                   </div>
+                 </div>
+               </div>
               <div class="flex justify-between text-sm text-green-600">
                 <span>Discount</span>
-                <span v-if="discountAmount">-{{ formatPrice(discountAmount) }}</span>
-                <span v-else>0 {{ cartItems[0].price?.currency.es }}</span>
+                <span v-if="discountAmount > 0"
+                  >-{{ formatPrice(discountAmount) }} {{ cartItems[0]?.price?.currency?.es || '' }}</span
+                >
+                <span v-else>0 {{ cartItems[0]?.price?.currency?.es || '' }}</span>
               </div>
               <div class="border-t border-gray-200 pt-3">
                 <div
                   class="flex justify-between text-lg font-semibold text-gray-900"
                 >
                   <span>Total</span>
-                  <span>{{ formatPrice(cartTotal) }} {{ cartItems[0].price?.currency.es }}</span>
+                  <span
+                    >{{ formatPrice(cartTotal) }}
+                    {{ cartItems[0].price?.currency.es }}</span
+                  >
                 </div>
               </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              Payment Methods
+            </h3>
+            <div class="flex items-center justify-between gap-4 mb-4">
+              <IconsStripe :class="paymentMethod === 'stripe' ? 'border-scimaGold border-2' : ''" @click="selectPaymentMethod('stripe')" />
+              <IconsPayu :class="paymentMethod === 'payu' ? 'border-scimaGold border-2' : ''" @click="selectPaymentMethod('payu')" />
+              <IconsBold :class="paymentMethod === 'bold' ? 'border-scimaGold border-2' : ''" @click="selectPaymentMethod('bold')" />
             </div>
 
             <!-- Checkout Button -->
             <button
               @click="proceedToPayment"
               :disabled="!canProceedToPayment"
-              class="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              class="w-full px-6 py-3 bg-scimaGold text-white font-medium rounded-lg hover:bg-scimaGold/90 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {{
                 canProceedToPayment
@@ -266,7 +334,7 @@
             <div class="mt-4 text-center">
               <NuxtLink
                 to="/shop"
-                class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                class="text-sm text-scimaGold hover:text-scimaGold/90 font-medium"
               >
                 Continue Shopping
               </NuxtLink>
@@ -299,18 +367,16 @@ const addressesStore = useAddressesStore();
 // Reactive state
 const selectedAddress = ref(null);
 const orderNotes = ref("");
+const couponCode = ref("");
+const couponError = ref("");
+const couponSuccess = ref("");
 
 // Computed properties
 const cartItems = computed(() => cartStore.getCartItems);
 const addresses = computed(() => addressesStore.addresses);
 
 const cartSubtotal = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    const price = parseFloat(
-      item.price?.after_discount?.replace(/[^\d.]/g, "") || "0"
-    );
-    return total + price * item.quantity;
-  }, 0);
+  return cartStore.cartSummary?.subtotal;
 });
 
 const shippingCost = computed(() => {
@@ -318,15 +384,19 @@ const shippingCost = computed(() => {
 });
 
 const discountAmount = computed(() => {
-  return false;
+  return cartStore.totalDiscount;
+});
+
+const appliedCoupons = computed(() => {
+  return cartStore.appliedCouponsList;
 });
 
 const cartTotal = computed(() => {
-  return cartSubtotal.value + shippingCost.value - discountAmount.value;
+  return cartStore.cartSummary?.total;
 });
 
 const canProceedToPayment = computed(() => {
-  return selectedAddress.value !== null && cartItems.value.length > 0;
+  return selectedAddress.value !== null && cartItems.value.length > 0 && paymentMethod.value !== "";
 });
 
 // Methods
@@ -344,15 +414,59 @@ const formatPrice = (price) => {
 
 const proceedToPayment = () => {
   if (!canProceedToPayment.value) return;
-  alert("Proceeding to payment");
+  
+  // Format coupons array
+  const coupons = appliedCoupons.value.map(coupon => ({
+    code: coupon.code,
+    amount: coupon.amount
+  }));
+  
+  let payload = {
+    address: selectedAddress.value.id,
+    payment_method: paymentMethod.value,
+    notes: orderNotes.value,
+    coupons: coupons,
+  };
+  console.log(payload);
 };
 
 // Load data on mount
-Promise.all([
-  addressesStore.loadAddresses(),
-  cartStore.loadCart(),
-]);
+Promise.all([addressesStore.loadAddresses(), cartStore.loadCart()]);
 selectedAddress.value = addresses.value.find((addr) => addr.default);
+const paymentMethod = ref("");
+const selectPaymentMethod = (method) => {
+  paymentMethod.value = method;
+};
+
+// Coupon methods
+const applyCoupon = async () => {
+  if (!couponCode.value.trim()) {
+    couponError.value = "Please enter a coupon code";
+    return;
+  }
+
+  couponError.value = "";
+  couponSuccess.value = "";
+
+  const result = await cartStore.applyCoupon(couponCode.value);
+  
+  if (result.success) {
+    couponSuccess.value = result.message?.es || result.message?.en || "Coupon applied successfully";
+    couponCode.value = "";
+  } else {
+    couponError.value = result.message;
+  }
+};
+
+const removeCoupon = (code) => {
+  const result = cartStore.removeCoupon(code);
+  if (result.success) {
+    couponSuccess.value = "Coupon removed successfully";
+  } else {
+    couponError.value = result.message;
+  }
+};
+
 </script>
 
 <style scoped>
